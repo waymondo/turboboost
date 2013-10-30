@@ -7,17 +7,24 @@ module Turboforms
 
     included do
       send :rescue_from, Exception, with: :turboforms_error_handler
-      send :rescue_from, "ActiveRecord::RecordInvalid", with: :turboforms_error_handler
     end
 
     def turboforms_error_handler(exception)
-      if request.xhr? and request.headers['HTTP_X_TURBOFORMS'] and exception.record
-        render_turboforms_error(exception.record)
+      if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
+        if defined?(exception.record)
+          render_turboforms_error(exception.record)
+        else
+          render_turboforms_generic_error(exception)
+        end
       end
     end
 
     def render_turboforms_error(record)
       render json: record.errors.full_messages.to_json, status: :unprocessable_entity
+    end
+
+    def render_turboforms_generic_error(exception)
+      render json: exception.message.to_json, status: :internal_server_error
     end
 
     def redirect_to(options={}, response_status_and_flash={})
@@ -32,18 +39,22 @@ module Turboforms
       raise ActionControllerError.new("Cannot redirect to nil!") unless options
       raise AbstractController::DoubleRenderError if response_body
 
-      self.location = _compute_redirect_to_location(options)
-      head :ok, response_status_and_flash.merge(location: self.location)
-
-      # set flash for turbo redirect
+      # set flash for turbo redirect headers
+      turboform_flash = {}
       self.class._flash_types.each do |flash_type|
         if type = response_status_and_flash.delete(flash_type)
-          flash[flash_type] = type
+          turboform_flash[flash_type] = type
         end
       end
       if other_flashes = response_status_and_flash.delete(:flash)
-        flash.update(other_flashes)
+        turboform_flash.update(other_flashes)
       end
+
+      self.location = _compute_redirect_to_location(options)
+      head :ok, "X-Flash" => turboform_flash.to_json
+
+      flash.update(turboform_flash) # set flash for rendered view
+
     end
 
   end
