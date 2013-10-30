@@ -41,7 +41,8 @@ module Turboforms
 
       # set flash for turbo redirect headers
       turboform_flash = {}
-      self.class._flash_types.each do |flash_type|
+      flash_types = defined?(self.class._flash_types) ? self.class._flash_types : [:alert, :notice]
+      flash_types.each do |flash_type|
         if type = response_status_and_flash.delete(flash_type)
           turboform_flash[flash_type] = type
         end
