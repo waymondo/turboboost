@@ -20,7 +20,7 @@ module Turboforms
     end
 
     def render_turboforms_error(record)
-      render json: record.errors.full_messages.to_json, status: :unprocessable_entity
+      render json: record.errors.full_messages.to_a.to_json, status: :unprocessable_entity
     end
 
     def render_turboforms_generic_error(exception)
