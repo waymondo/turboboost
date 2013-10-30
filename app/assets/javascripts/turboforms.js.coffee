@@ -1,5 +1,5 @@
 @Turboforms =
-  insertError: true
+  insertErrors: true
 
 turboforms = "form[data-turboform]"
 errID = "#error_explanation"
@@ -13,7 +13,7 @@ disableForm = ($form) ->
   $form.find("[type='submit']").attr('disabled', 'disabled')
 
 insertErrors = (e, errors) ->
-  return if !Turboforms.insertError
+  return if !Turboforms.insertErrors
   $form = $(e.target)
   $el = $form.find(errID)
   if !$el.length
