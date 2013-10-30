@@ -16,18 +16,33 @@ module Turboforms
       end
     end
 
-
     def render_turboforms_error(record)
       render json: record.errors.full_messages.to_json, status: :unprocessable_entity
     end
 
-    def redirect_to(options={}, response_status={})
+    def redirect_to(options={}, response_status_and_flash={})
       if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
-        self.status        = _extract_redirect_to_status(options, response_status)
-        self.location      = _compute_redirect_to_location(options)
-        head response_status.merge(location: self.location)
+        turboform_redirect_to(options, response_status_and_flash)
       else
         super
+      end
+    end
+
+    def turboform_redirect_to(options={}, response_status_and_flash={})
+      raise ActionControllerError.new("Cannot redirect to nil!") unless options
+      raise AbstractController::DoubleRenderError if response_body
+
+      self.location = _compute_redirect_to_location(options)
+      head :ok, response_status_and_flash.merge(location: self.location)
+
+      # set flash for turbo redirect
+      self.class._flash_types.each do |flash_type|
+        if type = response_status_and_flash.delete(flash_type)
+          flash[flash_type] = type
+        end
+      end
+      if other_flashes = response_status_and_flash.delete(:flash)
+        flash.update(other_flashes)
       end
     end
 
