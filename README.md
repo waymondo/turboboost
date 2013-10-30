@@ -2,14 +2,14 @@
 
 ### Design Pattern
 
-In order to bring AJAX control over your Rails app in a Turbolinks compatible way, you have to define some assumptions. The way Turboforms currently works is:
+In order to bring AJAX control over your Rails app's forms in a Turbolinks compatible way, you have to define some assumptions. The way Turboforms currently works is:
 
-* For GET requests, visit the form's action with the serialized data appended to as a query string with Turbolinks.
-* For other request types, hit the Rails controller. Then:
+* For GET requests, visit the form's action with the serialized data appended to as a query string with Turbolinks. This will preserve navigable history states for things like search filter forms.
+* For other request types, hit your Rails controllers then:
     - If the response has a `redirect_to` declaration, visit that route with Turbolinks.
     - If there is an exception error(s), do not visit anything with Turbolinks. The errors will be sent to the global document event `turboform:error`.
-* Turboforms only works on forms that you define with `turboform: true` in your Rails form helper options or manually as a `data-turboform` attribute.
-* When a Turboform has an AJAX request in process, do sensible things like disable the form's submit button.
+* Turboforms only works on forms that you define with `turboform: true` in your Rails form helper options or manually with a `data-turboform` attribute.
+* When a Turboform has an AJAX request in process, do sensible things like disable that form's submit button.
 
 These definitions are definitely open to discussion.
 
@@ -95,11 +95,11 @@ $(document).on "turboform:error", (e, errors) ->
   console.log(errors) # <- JSON array of errors messages
 ```
 
-There is also a `turboform:success` event that is trigger and passed `flash[:notice]` if it is present:
+There is also a `turboform:success` event that is trigger and passed a hash of the `flash` notices if they are present:
 
 ``` coffeescript
-$(document).on "turboform:success", (e, notice) ->
-  console.log(notice) # -> "Post was successfully created."
+$(document).on "turboform:success", (e, flash) ->
+  console.log(flash) # -> "{'notice': 'Post was successfully created.'}"
 ```
 
 
