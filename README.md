@@ -102,4 +102,9 @@ $(document).on "turboform:success", (e, flash) ->
   console.log(flash) # -> "{'notice': 'Post was successfully created.'}"
 ```
 
+You can prevent redirecting by default behavior on any form by adding the attribute `data-no-turbolink-redirect` to your form if you just want to handle the response with returned flash messages.
+
+## Todo
+
+* Tests, obviously.
 
