@@ -60,6 +60,7 @@ module Turboforms
 
   end
 
+  # borrowed from - https://github.com/fs/turboforms/blob/master/lib/turboforms.rb
   module FormHelper
     extend ActiveSupport::Concern
 

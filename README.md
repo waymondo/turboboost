@@ -11,7 +11,7 @@ In order to bring AJAX control over your Rails app's forms in a Turbolinks compa
 * Turboforms only works on forms that you define with `turboform: true` in your Rails form helper options or manually with a `data-turboform` attribute.
 * When a Turboform has an AJAX request in process, do sensible things like disable that form's submit button.
 
-These definitions are definitely open to discussion.
+These are definitely open to discussion. The goal here is to be Rails 3.2+ and Rails 4+ compatible. 
 
 ### Installation
 
@@ -99,7 +99,7 @@ There is also a `turboform:success` event that is trigger and passed a hash of t
 
 ``` coffeescript
 $(document).on "turboform:success", (e, flash) ->
-  console.log(flash) # -> "{'notice': 'Post was successfully created.'}"
+  console.log(flash) # -> {'notice': 'Post was successfully created.'}
 ```
 
 You can prevent redirecting by default behavior on any form by adding the attribute `data-no-turbolink-redirect` to your form if you just want to handle the response with returned flash messages.
