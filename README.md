@@ -1,4 +1,4 @@
-## Turbolinks to your Rails form submissions
+## Turbolinks for your Rails forms
 
 ### Design Pattern
 
@@ -35,16 +35,16 @@ Put that in your `Gemfile` and `bundle install`. In your `application.js` put:
 In your view:
 
 ```
-= form_for @post, turbolink: true do |f| ...
+= form_for @post, turboform: true do |f| ...
 ```
 
 or:
 
 ```
-<form data-turbolink> ...
+<form data-turboform> ...
 ```
 
-In your controller, the simplest example of handling would be:
+In your controller, the simplest example of handling a server response would look something like:
 
 ``` ruby
 def create
@@ -56,7 +56,7 @@ end
 
 If the post is invalid, a `rescue_from` handler will pass off the errors to JavaScript through the `turboform:error` event.
 
-You can also render the error message explicitly with the method `render_turboforms_error(record)`:
+You can also render the JSON error messages explicitly with the method `render_turboforms_error(record)`:
 
 ``` ruby
 def create
@@ -86,7 +86,7 @@ By default, Turboforms will render returned errors with the same URL structure u
 </div>
 ```
 
-This can be disabled with and you can roll your own error handler:
+Or this can be disabled and you can roll your own error handler:
 
 ``` coffeescript
 Turboforms.insertErrors = false
