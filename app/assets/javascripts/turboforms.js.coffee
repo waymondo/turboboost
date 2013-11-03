@@ -30,7 +30,7 @@ tryJSONParse = (str) ->
 
 $(document)
   .on "ajax:beforeSend", turboforms, (e, xhr, settings) ->
-    xhr.setRequestHeader('X-Turboforms', 'enabled')
+    xhr.setRequestHeader('X-Turboforms', '1')
     disableForm $(e.target)
     if settings.type == "GET"
       Turbolinks.visit [@action, $(@).serialize()].join("?")

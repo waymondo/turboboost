@@ -12,19 +12,24 @@ module Turboforms
     def turboforms_error_handler(exception)
       if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
         if defined?(exception.record)
-          render_turboforms_error(exception.record)
+          render_turboforms_error_for(exception.record)
         else
           render_turboforms_generic_error(exception)
         end
       end
     end
 
-    def render_turboforms_error(record)
-      render json: record.errors.full_messages.to_a.to_json, status: :unprocessable_entity
+    def render_turboforms_error_for(record)
+      render json: record.errors.full_messages.to_a, status: :unprocessable_entity
     end
 
     def render_turboforms_generic_error(exception)
-      render json: exception.message.to_json, status: :internal_server_error
+      render json: [exception.message], status: :internal_server_error
+    end
+
+    def head_turboforms_success(turboform_flash={})
+      turboform_flash = _turboform_get_flash_messages(turboform_flash)
+      head :ok, "X-Flash" => turboform_flash.to_json
     end
 
     def redirect_to(options={}, response_status_and_flash={})
@@ -40,6 +45,15 @@ module Turboforms
       raise AbstractController::DoubleRenderError if response_body
 
       # set flash for turbo redirect headers
+      turboform_flash = _turboform_get_flash_messages(response_status_and_flash)
+
+      self.location = _compute_redirect_to_location(options)
+      head :ok, "X-Flash" => turboform_flash.to_json
+
+      flash.update(turboform_flash) # set flash for rendered view
+    end
+
+    def _turboform_get_flash_messages(response_status_and_flash={})
       turboform_flash = {}
       flash_types = defined?(self.class._flash_types) ? self.class._flash_types : [:alert, :notice]
       flash_types.each do |flash_type|
@@ -50,12 +64,7 @@ module Turboforms
       if other_flashes = response_status_and_flash.delete(:flash)
         turboform_flash.update(other_flashes)
       end
-
-      self.location = _compute_redirect_to_location(options)
-      head :ok, "X-Flash" => turboform_flash.to_json
-
-      flash.update(turboform_flash) # set flash for rendered view
-
+      turboform_flash
     end
 
   end
@@ -96,13 +105,13 @@ module Turboforms
 
   class Engine < Rails::Engine
     initializer :turboforms do
-
        ActionView::Base.send :include, Turboforms::FormHelper
-       ActiveSupport.on_load(:action_controller) do
-         include Turboforms::Controller
-       end
-
      end
   end
 
+end
+
+# ActionView::Base.send :include, Turboforms::FormHelper
+ActiveSupport.on_load(:action_controller) do
+  include Turboforms::Controller
 end

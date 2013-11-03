@@ -48,9 +48,8 @@ In your controller, the simplest example of handling a server response would loo
 
 ``` ruby
 def create
-  @post = Post.new(params[:post])
-  @post.save! # <- trigger exception on invalid model
-  redirect_to @post, notice: 'Post was successfully created.'
+  post = Post.create!(params[:post]) <- trigger exception if model is invalid
+  redirect_to post, notice: 'Post was successfully created.'
 end
 ```
 
@@ -66,7 +65,7 @@ def create
   else
     respond_to do |format|
       format.html { render 'new' }
-      format.js { render_turboforms_error(@post) }
+      format.js { render_turboforms_error_for(@post) }
     end
   end
 end
