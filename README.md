@@ -16,15 +16,12 @@ These are definitely open to discussion. The goal here is to be Rails 3.2+ and R
 ### Installation
 
 ``` ruby
-gem "turbolinks"  
-gem "jquery-rails"  
 gem "turboforms", github: "waymondo/turboforms"
 ```
 
-Put that in your `Gemfile` and `bundle install`. In your `application.js` put:
+Put that in your `Gemfile` and `bundle install`. In your `application.js` require it after `jquery_ujs` and `turbolinks`:
 
 ``` javascript
-//= require jquery  
 //= require jquery_ujs  
 //= require turbolinks  
 //= require turboforms
@@ -55,7 +52,7 @@ end
 
 If the post is invalid, a `rescue_from` handler will pass off the errors to JavaScript through the `turboform:error` event.
 
-You can also render the JSON error messages explicitly with the method `render_turboforms_error(record)`:
+You can also render the JSON error messages explicitly with the method `render_turboforms_error_for(record)`:
 
 ``` ruby
 def create
@@ -73,7 +70,7 @@ end
 
 ### JavaScript options and events
 
-By default, Turboforms will render returned errors with the same URL structure used in the default Rails generators and prepend it to the form. The structure looks like this:
+By default, Turboforms will render returned errors with the same HTML structure used in the default Rails generators and prepend it to the form. The structure looks like this:
 
 ``` html
 <div id="error_explanation">
