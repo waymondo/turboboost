@@ -1,4 +1,14 @@
-## Turbolinks for your Rails forms
+## Turboforms
+
+Turboforms plugs the power of Turbolinks into the form requests in your Rails app. It aims to be a seemless and logical addition to any Turbolinks-rocking Rails app. The main features are:
+
+* Integration into Turbolinks-managed browser history states.
+
+* Faster loading upon successful form submissions with redirects, as only the body is swapped out.
+
+* Customizable success and error handling through registered JavaScript events, with optional error rendering built-in.
+
+As a bonus: since failed form submissions are caught and returned with JavaScript, you can cache your views harder since you don't have to re-render your form view with the model in an invalid state.
 
 ### Design Pattern
 
@@ -6,8 +16,8 @@ In order to bring AJAX control over your Rails app's forms in a Turbolinks compa
 
 * For GET requests, visit the form's action with the serialized data appended to as a query string with Turbolinks. This will preserve navigable history states for things like search filter forms.
 * For other request types, hit your Rails controllers then:
-    - If the response has a `redirect_to` declaration, visit that route with Turbolinks.
-    - If there is an exception error(s), do not visit anything with Turbolinks. The errors will be sent to the global document event `turboform:error`.
+    - If the response has a `redirect_to` declaration, do not reload. Instead, visit that route with Turbolinks.
+    - If there is an error, don't visit anything with Turbolinks. Instead, the errors will be sent through the global document event `turboform:error`. Optionally, the errors can be prepended to the form as HTML.
 * Turboforms only works on forms that you define with `turboform: true` in your Rails form helper options or manually with a `data-turboform` attribute.
 * When a Turboform has an AJAX request in process, do sensible things like disable that form's submit button.
 
@@ -41,7 +51,7 @@ or:
 <form data-turboform> ...
 ```
 
-In your controller, the simplest example of handling a server response would look something like:
+In its simplest server-side implementation, a controller action would look like this:
 
 ``` ruby
 def create
@@ -50,7 +60,7 @@ def create
 end
 ```
 
-If the post is invalid, a `rescue_from` handler will pass off the errors to JavaScript through the `turboform:error` event.
+If the post is invalid, a `rescue_from` handler will pass off the errors to JavaScript through the `turboform:error` event. If the post is successfully created, the app will visit the `post_url` with Turbolinks if it was sent from a Turboform. Otherwise, the redirect will happen like normal.
 
 You can also render the JSON error messages explicitly with the method `render_turboforms_error_for(record)`:
 
@@ -67,6 +77,8 @@ def create
   end
 end
 ```
+
+Currently, Turboforms will handle invalid `ActiveModel` error messages as well as general `Exception` messages.
 
 ### JavaScript options and events
 
@@ -91,16 +103,15 @@ $(document).on "turboform:error", (e, errors) ->
   console.log(errors) # <- JSON array of errors messages
 ```
 
-There is also a `turboform:success` event that is trigger and passed a hash of the `flash` notices if they are present:
+There is also a `turboform:success` event that is trigger and passed a hash of the flash messages if they are present. You may also prevent redirecting on any Turboform by adding the attribute `data-no-turboform-redirect` to your form element if you just want to handle the response and returned flash messages manually:
 
 ``` coffeescript
 $(document).on "turboform:success", (e, flash) ->
   console.log(flash) # -> {'notice': 'Post was successfully created.'}
 ```
 
-You can prevent redirecting by default behavior on any form by adding the attribute `data-no-turbolink-redirect` to your form if you just want to handle the response with returned flash messages.
-
 ## Todo
 
-* Tests, obviously.
+* More tests, obviously.
+* Extended error/exception handling.
 
