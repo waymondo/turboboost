@@ -16,6 +16,8 @@ module Turboforms
         else
           render_turboforms_generic_error(exception)
         end
+      else
+        raise exception
       end
     end
 
