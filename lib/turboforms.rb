@@ -1,32 +1,45 @@
 require 'turboforms/version'
 
+CATCHABLE_ERRORS = [
+  EOFError,
+  Errno::ECONNRESET,
+  Errno::EINVAL,
+  "Timeout::Error",
+  "Net::HTTPBadResponse",
+  "Net::HTTPHeaderSyntaxError",
+  "Net::ProtocolError",
+  "ActiveRecord::ActiveRecordError",
+  "ActiveModel::StrictValidationFailed",
+  "ActiveModel::MissingAttributeError"
+]
+
 module Turboforms
 
   module Controller
     extend ActiveSupport::Concern
 
     included do
-      send :rescue_from, Exception, with: :turboforms_error_handler
+      send :rescue_from, *(CATCHABLE_ERRORS), with: :turboforms_error_handler
     end
 
-    def turboforms_error_handler(exception)
+    def turboforms_error_handler(error)
       if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
-        if defined?(exception.record)
-          render_turboforms_error_for(exception.record)
+        if defined?(error.record)
+          render_turboforms_error_for(error.record)
         else
-          render_turboforms_generic_error(exception)
+          render_turboforms_generic_error(error)
         end
       else
-        raise exception
+        raise error
       end
     end
 
     def render_turboforms_error_for(record)
-      render json: record.errors.full_messages.to_a, status: :unprocessable_entity
+      render json: record.errors.full_messages.to_a, status: :unprocessable_entity, root: false
     end
 
-    def render_turboforms_generic_error(exception)
-      render json: [exception.message], status: :internal_server_error
+    def render_turboforms_generic_error(error)
+      render json: [error.message], status: :internal_server_error
     end
 
     def head_turboforms_success(turboform_flash={})
