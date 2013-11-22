@@ -28,6 +28,16 @@ tryJSONParse = (str) ->
   catch e
     null
 
+maybeInsertSuccessResponseBody = (resp) ->
+  if (scope = resp.getResponseHeader('X-Within'))
+    $(scope).html(resp.responseText)
+  else if (scope = resp.getResponseHeader('X-Replace'))
+    $(scope).replaceWith(resp.responseText)
+  else if (scope = resp.getResponseHeader('X-Append'))
+    $(scope).append(resp.responseText)
+  else if (scope = resp.getResponseHeader('X-Prepend'))
+    $(scope).prepend(resp.responseText)
+
 $(document)
   .on "ajax:beforeSend", turboforms, (e, xhr, settings) ->
     xhr.setRequestHeader('X-Turboforms', '1')
@@ -39,14 +49,15 @@ $(document)
   .on "ajax:complete", turboforms, (e, resp) ->
     $form = $(e.target)
 
-    if resp.status in [200..209]
+    if resp.status in [200..299]
       $form.trigger "turboform:success", tryJSONParse resp.getResponseHeader('X-Flash')
       if (location = resp.getResponseHeader('Location')) and !$form.attr('data-no-turboform-redirect')
         Turbolinks.visit(location)
       else
         enableForm $form
+        maybeInsertSuccessResponseBody(resp)
 
-    if resp.status in [422, 500]
+    if resp.status in [400..599]
       enableForm $form
       $form.trigger "turboform:error", tryJSONParse resp.responseText
 

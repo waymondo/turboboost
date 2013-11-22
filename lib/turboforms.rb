@@ -47,6 +47,22 @@ module Turboforms
       head :ok, "X-Flash" => turboform_flash.to_json
     end
 
+    def render(*args, &block)
+      if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
+        turboform_render(*args, &block)
+      else
+        super
+      end
+    end
+
+    def turboform_render(*args, &block)
+      options = _normalize_render(*args, &block)
+      [:replace, :within, :append, :prepend].each do |h|
+        response.headers["X-#{h.capitalize}"] = options[h] if options[h]
+      end
+      self.response_body = render_to_body(options)
+    end
+
     def redirect_to(options={}, response_status_and_flash={})
       if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
         turboform_redirect_to(options, response_status_and_flash)

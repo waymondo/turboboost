@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    turboforms (0.0.3)
+    turboforms (0.0.4)
       coffee-rails
       jquery-rails
       railties
