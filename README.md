@@ -62,7 +62,7 @@ end
 
 If the post is invalid, a `rescue_from` handler will pass off the errors to JavaScript through the `turboform:error` event. If the post is successfully created, the app will visit the `post_url` with Turbolinks if it was sent from a Turboform. Otherwise, the redirect will happen like normal.
 
-You can also render the JSON error messages explicitly with the method `render_turboforms_error_for(record)`:
+You can also render the JSON error messages explicitly with the method `render_turboform_errors_for(record)`:
 
 ``` ruby
 def create
@@ -72,7 +72,7 @@ def create
   else
     respond_to do |format|
       format.html { render 'new' }
-      format.js { render_turboforms_error_for(@post) }
+      format.js { render_turboform_errors_for(@post) }
     end
   end
 end
@@ -113,5 +113,6 @@ $(document).on "turboform:success", (e, flash) ->
 ## Todo
 
 * More tests, obviously.
-* Extended error/exception handling.
+* Extended error/exception white-listing handling (currently handles HTTP and ActiveRecord/ActiveModel validation errors).
+* controller action `render_turboform_success` for rendering views/partials within CSS selectors.
 

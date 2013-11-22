@@ -25,20 +25,20 @@ module Turboforms
     def turboforms_error_handler(error)
       if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
         if defined?(error.record)
-          render_turboforms_error_for(error.record)
+          render_turboform_errors_for(error.record)
         else
-          render_turboforms_generic_error(error)
+          render_turboform_generic_error(error)
         end
       else
         raise error
       end
     end
 
-    def render_turboforms_error_for(record)
+    def render_turboform_errors_for(record)
       render json: record.errors.full_messages.to_a, status: :unprocessable_entity, root: false
     end
 
-    def render_turboforms_generic_error(error)
+    def render_turboform_generic_error(error)
       render json: [error.message], status: :internal_server_error
     end
 
