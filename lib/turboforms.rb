@@ -1,17 +1,20 @@
 require 'turboforms/version'
 
-CATCHABLE_ERRORS = [
-  EOFError,
-  Errno::ECONNRESET,
-  Errno::EINVAL,
-  "Timeout::Error",
-  "Net::HTTPBadResponse",
-  "Net::HTTPHeaderSyntaxError",
-  "Net::ProtocolError",
-  "ActiveRecord::ActiveRecordError",
-  "ActiveModel::StrictValidationFailed",
-  "ActiveModel::MissingAttributeError"
-]
+CATCHABLE_ERRORS = {
+  "EOFError"                            => 500,
+  "Errno::ECONNRESET"                   => 500,
+  "Errno::EINVAL"                       => 500,
+  "Timeout::Error"                      => :request_timeout,
+  "Net::HTTPBadResponse"                => 500,
+  "Net::HTTPHeaderSyntaxError"          => 500,
+  "Net::ProtocolError"                  => 500,
+  "ActiveRecord::RecordNotFound"        => :not_found,
+  "ActiveRecord::StaleObjectError"      => :conflict,
+  "ActiveRecord::RecordInvalid"         => :unprocessable_entity,
+  "ActiveRecord::RecordNotSaved"        => :unprocessable_entity,
+  "ActiveModel::StrictValidationFailed" => :unprocessable_entity,
+  "ActiveModel::MissingAttributeError"  => :unprocessable_entity
+}
 
 module Turboforms
 
@@ -19,15 +22,16 @@ module Turboforms
     extend ActiveSupport::Concern
 
     included do
-      send :rescue_from, *(CATCHABLE_ERRORS), with: :turboforms_error_handler
+      send :rescue_from, *(CATCHABLE_ERRORS.keys), with: :turboforms_error_handler
     end
 
     def turboforms_error_handler(error)
       if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
+        error_status = CATCHABLE_ERRORS[error.class.name]
         if defined?(error.record)
           render_turboform_errors_for(error.record)
         else
-          render_turboform_generic_error(error)
+          render json: [error.message], status: error_status || 500
         end
       else
         raise error
@@ -36,10 +40,6 @@ module Turboforms
 
     def render_turboform_errors_for(record)
       render json: record.errors.full_messages.to_a, status: :unprocessable_entity, root: false
-    end
-
-    def render_turboform_generic_error(error)
-      render json: [error.message], status: :internal_server_error
     end
 
     def head_turboforms_success(turboform_flash={})
