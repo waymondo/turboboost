@@ -20,7 +20,8 @@ class Post
     valid?
   end
 
-  def update_attributes
+  def update_attributes!(attributes)
+    attributes = attributes
     valid?
   end
 
@@ -43,20 +44,42 @@ class PostsController < ApplicationController
 
   def update
     post = Post.find(params[:id])
-    if post.update_attributes(params[:post])
-      redirect_to post_url(post)
-    else
-      respond_to do |format|
-        format.html { redirect_to posts_url }
-        format.js { render_turboforms_error_for(post) }
-      end
-    end
+    post.update_attributes!
+    redirect_to post_url(post), notice: "Post was successfully updated."
   end
 
   def destroy
     post = Post.find(params[:id])
     post.destroy!
     redirect_to posts_url
+  end
+
+end
+
+class PostsVerboseController < PostsController
+
+  def create
+    post = post.new(params[:post])
+    if post.save
+      redirect_to post_url(post)
+    else
+      respond_to do |format|
+        format.html { redirect_to posts_url }
+        format.js { render_turboform_errors_for(post) }
+      end
+    end
+  end
+
+  def update
+    post = post.find(params[:id])
+    if post.update_attributes(params[:post])
+      redirect_to post_url(post)
+    else
+      respond_to do |format|
+        format.html { redirect_to posts_url }
+        format.js { render_turboform_errors_for(post) }
+      end
+    end
   end
 
 end
@@ -81,12 +104,12 @@ class PostsControllerTest < ActionController::TestCase
   test "On an unsuccessful turboform request, catch and return the error message(s) as an array" do
     xhr :post, :create, post: { title: "" }
 
-    assert_equal @response.status, 500
+    assert_equal @response.status, 422
     assert_equal @response.body.strip, ["Title is too short."].to_json
   end
 
   test "On an unsuccessful turboform request, explicitly render the error message(s)" do
-    skip
+
   end
 
 end
