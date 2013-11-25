@@ -1,5 +1,5 @@
 @Turboforms =
-  insertErrors: true
+  insertErrors: false
   defaultError: "Sorry, there was an error."
 
 turboforms = "form[data-turboform]"
