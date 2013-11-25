@@ -140,7 +140,7 @@ Turboforms also provides some extra rendering options for letting you render you
 The value can be any jQuery selector. Example usage:
 
 ``` ruby
-render do |format|
+respond_to do |format|
   format.js { render partial: 'task', object: @task, prepend: "#todo-list" }
 end
 ```
@@ -148,7 +148,7 @@ end
 or:
 
 ``` ruby
-render do |format|
+respond_to do |format|
   format.js { render partial: 'task', object: @task, replace: "#todo-item#{@task.id}" }
 end
 ```
