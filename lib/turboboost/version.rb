@@ -1,3 +1,3 @@
 module Turboboost
-  VERSION = '0.0.5.1'
+  VERSION = '0.0.6'
 end
