@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    turboforms (0.0.4)
+    turboboost (0.0.5)
       coffee-rails
       jquery-rails
       railties
@@ -111,5 +111,5 @@ DEPENDENCIES
   mocha
   rails (>= 3.2, < 5)
   rake
-  turboforms!
+  turboboost!
   turn
