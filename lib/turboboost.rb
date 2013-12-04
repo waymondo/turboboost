@@ -1,4 +1,4 @@
-require 'turboforms/version'
+require 'turboboost/version'
 
 CATCHABLE_ERRORS = {
   "EOFError"                            => 500,
@@ -16,20 +16,20 @@ CATCHABLE_ERRORS = {
   "ActiveModel::MissingAttributeError"  => :unprocessable_entity
 }
 
-module Turboforms
+module Turboboost
 
   module Controller
     extend ActiveSupport::Concern
 
     included do
-      send :rescue_from, *(CATCHABLE_ERRORS.keys), with: :turboforms_error_handler
+      send :rescue_from, *(CATCHABLE_ERRORS.keys), with: :turboboost_error_handler
     end
 
-    def turboforms_error_handler(error)
-      if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
+    def turboboost_error_handler(error)
+      if request.xhr? and request.headers['HTTP_X_TURBOBOOST']
         error_status = CATCHABLE_ERRORS[error.class.name]
         if defined?(error.record)
-          render_turboform_errors_for(error.record)
+          render_turboboost_errors_for(error.record)
         else
           render json: [error.message], status: error_status || 500
         end
@@ -38,24 +38,24 @@ module Turboforms
       end
     end
 
-    def render_turboform_errors_for(record)
+    def render_turboboost_errors_for(record)
       render json: record.errors.full_messages.to_a, status: :unprocessable_entity, root: false
     end
 
-    def head_turboforms_success(turboform_flash={})
-      turboform_flash = _turboform_get_flash_messages(turboform_flash)
-      head :ok, "X-Flash" => turboform_flash.to_json
+    def head_turboboost_success(turboboost_flash={})
+      turboboost_flash = _turboboost_get_flash_messages(turboboost_flash)
+      head :ok, "X-Flash" => turboboost_flash.to_json
     end
 
     def render(*args, &block)
-      if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
-        turboform_render(*args, &block)
+      if request.xhr? and request.headers['HTTP_X_TURBOBOOST']
+        turboboost_render(*args, &block)
       else
         super
       end
     end
 
-    def turboform_render(*args, &block)
+    def turboboost_render(*args, &block)
       options = _normalize_render(*args, &block)
       [:replace, :within, :append, :prepend].each do |h|
         response.headers["X-#{h.capitalize}"] = options[h] if options[h]
@@ -64,38 +64,38 @@ module Turboforms
     end
 
     def redirect_to(options={}, response_status_and_flash={})
-      if request.xhr? and request.headers['HTTP_X_TURBOFORMS']
-        turboform_redirect_to(options, response_status_and_flash)
+      if request.xhr? and request.headers['HTTP_X_TURBOBOOST']
+        turboboost_redirect_to(options, response_status_and_flash)
       else
         super
       end
     end
 
-    def turboform_redirect_to(options={}, response_status_and_flash={})
+    def turboboost_redirect_to(options={}, response_status_and_flash={})
       raise ActionControllerError.new("Cannot redirect to nil!") unless options
       raise AbstractController::DoubleRenderError if response_body
 
       # set flash for turbo redirect headers
-      turboform_flash = _turboform_get_flash_messages(response_status_and_flash)
+      turboboost_flash = _turboboost_get_flash_messages(response_status_and_flash)
 
       self.location = _compute_redirect_to_location(options)
-      head :ok, "X-Flash" => turboform_flash.to_json
+      head :ok, "X-Flash" => turboboost_flash.to_json
 
-      flash.update(turboform_flash) # set flash for rendered view
+      flash.update(turboboost_flash) # set flash for rendered view
     end
 
-    def _turboform_get_flash_messages(response_status_and_flash={})
-      turboform_flash = {}
+    def _turboboost_get_flash_messages(response_status_and_flash={})
+      turboboost_flash = {}
       flash_types = defined?(self.class._flash_types) ? self.class._flash_types : [:alert, :notice]
       flash_types.each do |flash_type|
         if type = response_status_and_flash.delete(flash_type)
-          turboform_flash[flash_type] = type
+          turboboost_flash[flash_type] = type
         end
       end
       if other_flashes = response_status_and_flash.delete(:flash)
-        turboform_flash.update(other_flashes)
+        turboboost_flash.update(other_flashes)
       end
-      turboform_flash
+      turboboost_flash
     end
 
   end
@@ -105,44 +105,44 @@ module Turboforms
     extend ActiveSupport::Concern
 
     included do
-      alias_method_chain :form_for, :data_turboform
-      alias_method_chain :form_tag, :data_turboform
+      alias_method_chain :form_for, :data_turboboost
+      alias_method_chain :form_tag, :data_turboboost
     end
 
-    def form_for_with_data_turboform(record_or_name_or_array, *args, &proc)
+    def form_for_with_data_turboboost(record_or_name_or_array, *args, &proc)
       options = args.extract_options!
 
-      if options.has_key?(:turboform) && options.delete(:turboform)
+      if options.has_key?(:turboboost) && options.delete(:turboboost)
         options[:html] ||= {}
-        options[:html]["data-turboform"] = true
+        options[:html]["data-turboboost"] = true
         options[:remote] = true
       end
 
-      form_for_without_data_turboform(record_or_name_or_array, *(args << options), &proc)
+      form_for_without_data_turboboost(record_or_name_or_array, *(args << options), &proc)
     end
 
-    def form_tag_with_data_turboform(record_or_name_or_array, *args, &proc)
+    def form_tag_with_data_turboboost(record_or_name_or_array, *args, &proc)
       options = args.extract_options!
 
-      if options.has_key?(:turboform) && options.delete(:turboform)
+      if options.has_key?(:turboboost) && options.delete(:turboboost)
         options[:data] ||= {}
-        options[:data]["turboform"] = true
+        options[:data]["turboboost"] = true
         options[:remote] = true
       end
 
-      form_tag_without_data_turboform(record_or_name_or_array, *(args << options), &proc)
+      form_tag_without_data_turboboost(record_or_name_or_array, *(args << options), &proc)
     end
   end
 
   class Engine < Rails::Engine
-    initializer :turboforms do
-       ActionView::Base.send :include, Turboforms::FormHelper
+    initializer :turboboost do
+       ActionView::Base.send :include, Turboboost::FormHelper
      end
   end
 
 end
 
-# ActionView::Base.send :include, Turboforms::FormHelper
+# ActionView::Base.send :include, Turboboost::FormHelper
 ActiveSupport.on_load(:action_controller) do
-  include Turboforms::Controller
+  include Turboboost::Controller
 end

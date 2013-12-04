@@ -65,7 +65,7 @@ class PostsVerboseController < PostsController
     else
       respond_to do |format|
         format.html { redirect_to posts_url }
-        format.js { render_turboform_errors_for(post) }
+        format.js { render_turboboost_errors_for(post) }
       end
     end
   end
@@ -77,7 +77,7 @@ class PostsVerboseController < PostsController
     else
       respond_to do |format|
         format.html { redirect_to posts_url }
-        format.js { render_turboform_errors_for(post) }
+        format.js { render_turboboost_errors_for(post) }
       end
     end
   end
@@ -89,10 +89,10 @@ class PostsControllerTest < ActionController::TestCase
   tests PostsController
 
   setup do
-    @request.headers["X-Turboforms"] = "1"
+    @request.headers["X-Turboboost"] = "1"
   end
 
-  test "On a successful turboform request, return an empty response with headers containing the redirect location and flash message" do
+  test "On a successful turboboost request, return an empty response with headers containing the redirect location and flash message" do
     xhr :post, :create, post: { title: "Foo" }
 
     assert @response.body.strip.blank?
@@ -101,14 +101,14 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal JSON.parse(@response.headers["X-Flash"])["notice"], 'Post was successfully created.'
   end
 
-  test "On an unsuccessful turboform request, catch and return the error message(s) as an array" do
+  test "On an unsuccessful turboboost request, catch and return the error message(s) as an array" do
     xhr :post, :create, post: { title: "" }
 
     assert_equal @response.status, 422
     assert_equal @response.body.strip, ["Title is too short."].to_json
   end
 
-  test "On an unsuccessful turboform request, explicitly render the error message(s)" do
+  test "On an unsuccessful turboboost request, explicitly render the error message(s)" do
 
   end
 

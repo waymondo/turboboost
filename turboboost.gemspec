@@ -1,15 +1,15 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'turboforms/version'
+require 'turboboost/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "turboforms"
-  spec.version       = Turboforms::VERSION
+  spec.name          = "turboboost"
+  spec.version       = Turboboost::VERSION
   spec.authors       = ["Justin Talbott"]
   spec.email         = ["justin@waymondo.com"]
-  spec.description   = %q{Turbolinks support for form error handling and success redirection.}
-  spec.summary       = %q{Turbolinks support for form error handling and success redirection.}
+  spec.description   = %q{Turbolinks and AJAX enhancements for your Rails forms and links.}
+  spec.summary       = %q{Turbolinks and AJAX enhancements for your Rails forms and links.}
   spec.homepage      = ""
   spec.license       = "MIT"
 

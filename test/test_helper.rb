@@ -13,23 +13,23 @@ require "action_controller/railtie"
 require 'rails/test_help'
 require 'awesome_print'
 
-require 'turboforms'
+require 'turboboost'
 
 class TestApp < Rails::Application; end
 Rails.application = TestApp
 Rails.configuration.secret_key_base = "abc123"
 
-Turboforms::Routes = ActionDispatch::Routing::RouteSet.new
-Turboforms::Routes.draw do
+Turboboost::Routes = ActionDispatch::Routing::RouteSet.new
+Turboboost::Routes.draw do
   resources 'posts'
 end
 
 class ApplicationController < ActionController::Base
-  include Turboforms::Routes.url_helpers
+  include Turboboost::Routes.url_helpers
 end
 
 class ActiveSupport::TestCase
   setup do
-    @routes = Turboforms::Routes
+    @routes = Turboboost::Routes
   end
 end

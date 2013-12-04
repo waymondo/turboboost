@@ -1,6 +1,6 @@
-## Turboforms
+## Turboboost
 
-Turboforms extends the power of Turbolinks into the forms of your Rails app and provides convenient success and error handlers. It aims to be a seemless and logical addition to any Turbolinks-rocking Rails 3.2+/4+ app. The main features are:
+Turboboost extends the power of Turbolinks into the forms of your Rails app and provides convenient success and error handlers. It aims to be a seemless and logical addition to any Turbolinks-rocking Rails 3.2+/4+ app. The main features are:
 
 * Response redirection is handled by Turbolinks.
 
@@ -20,21 +20,21 @@ Turboforms extends the power of Turbolinks into the forms of your Rails app and 
 
 <!-- ### Design Pattern -->
 
-<!-- In order to bring AJAX control over your Rails app's forms in a Turbolinks compatible way, you have to define some assumptions. The way Turboforms currently works is: -->
+<!-- In order to bring AJAX control over your Rails app's forms in a Turbolinks compatible way, you have to define some assumptions. The way Turboboost currently works is: -->
 
 <!-- * For GET requests, visit the form's action with the serialized data appended to as a query string with Turbolinks. This will preserve navigable history states for things like search filter forms. -->
 <!-- * For other request types, hit your Rails controllers then: -->
 <!--     - If the response has a `redirect_to` declaration, do not reload. Instead, visit that route with Turbolinks. -->
-<!--     - If there is an error, don't visit anything with Turbolinks. Instead, the errors will be sent through the global document event `turboform:error`. Optionally, the errors can be prepended to the form as HTML. -->
-<!-- * Turboforms only works on forms that you define with `turboform: true` in your Rails form helper options or manually with a `data-turboform` attribute. -->
-<!-- * When a Turboform has an AJAX request in process, do sensible things like disable that form's submit button. -->
+<!--     - If there is an error, don't visit anything with Turbolinks. Instead, the errors will be sent through the global document event `turboboost:error`. Optionally, the errors can be prepended to the form as HTML. -->
+<!-- * Turboboost only works on forms that you define with `turboboost: true` in your Rails form helper options or manually with a `data-turboboost` attribute. -->
+<!-- * When a Turboboost has an AJAX request in process, do sensible things like disable that form's submit button. -->
 
 <!-- These are definitely open to discussion. The goal here is to be Rails 3.2+ and Rails 4+ compatible.  -->
 
 ### Installation
 
 ``` ruby
-gem "turboforms", github: "waymondo/turboforms"
+gem "turboboost", github: "waymondo/turboboost"
 ```
 
 Put that in your `Gemfile` and `bundle install`. In your `application.js` require it after `jquery_ujs` and `turbolinks`:
@@ -42,26 +42,26 @@ Put that in your `Gemfile` and `bundle install`. In your `application.js` requir
 ``` javascript
 //= require jquery_ujs  
 //= require turbolinks  
-//= require turboforms
+//= require turboboost
 ```
 
-Then in your view files, add `turboform: true` to your form helpers:
+Then in your view files, add `turboboost: true` to your form helpers:
 
 ```
-= form_for :resource, turboform: true do |f| ...
+= form_for :resource, turboboost: true do |f| ...
 ```
 
 or add the data attribute manually:
 
 ```
-<form data-turboform> ...
+<form data-turboboost> ...
 ```
 
 ### Usage
 
 #### Redirection with Turbolinks
 
-In its simplest server-side implementation, a basic Turboforms controller action with redirection might look like this:
+In its simplest server-side implementation, a basic Turboboost controller action with redirection might look like this:
 
 ``` ruby
 def create
@@ -70,18 +70,18 @@ def create
 end
 ```
 
-If the post is successfully created, the app will visit the `post_url` with Turbolinks if it was sent from a Turboform. Otherwise, the redirect will happen like normal.
+If the post is successfully created, the app will visit the `post_url` with Turbolinks if it was sent from a Turboboost. Otherwise, the redirect will happen like normal.
 
 #### Error Handling and Flash Messages
 
-If the post in our example above is invalid, no redirect will happen and a `rescue_from` handler will pass off the errors to JavaScript through the `turboform:error` event:
+If the post in our example above is invalid, no redirect will happen and a `rescue_from` handler will pass off the errors to JavaScript through the `turboboost:error` event:
 
 ``` coffeescript
-$(document).on "turboform:error", (e, errors) ->
+$(document).on "turboboost:error", (e, errors) ->
   console.log(errors) # <- JSON array of errors messages
 ```
 
-You can also trigger the JSON error messages explicitly with the method `render_turboform_errors_for(record)` if you don't want to use the `rescue_from` handler:
+You can also trigger the JSON error messages explicitly with the method `render_turboboost_errors_for(record)` if you don't want to use the `rescue_from` handler:
 
 ``` ruby
 def create
@@ -91,13 +91,13 @@ def create
   else
     respond_to do |format|
       format.html { render 'new' }
-      format.js { render_turboform_errors_for(@post) }
+      format.js { render_turboboost_errors_for(@post) }
     end
   end
 end
 ```
 
-Optionally, Turboforms can render returned errors with the same HTML structure used in the default Rails generators and prepend it to the form. The HTML structure looks like this:
+Optionally, Turboboost can render returned errors with the same HTML structure used in the default Rails generators and prepend it to the form. The HTML structure looks like this:
 
 ``` html
 <div id="error_explanation">
@@ -112,23 +112,23 @@ Optionally, Turboforms can render returned errors with the same HTML structure u
 To turn it on:
 
 ``` coffeescript
-Turboforms.insertErrors = true
+Turboboost.insertErrors = true
 ```
 
-Currently Turboforms will handle invalid `ActiveRecord` and `ActiveModel` error messages as well as basic HTTP error messages.
+Currently Turboboost will handle invalid `ActiveRecord` and `ActiveModel` error messages as well as basic HTTP error messages.
 
-There is also a `turboform:success` event that is triggered and passed a hash of all current flash messages if they are present:
+There is also a `turboboost:success` event that is triggered and passed a hash of all current flash messages if they are present:
 
 ``` coffeescript
-$(document).on "turboform:success", (e, flash) ->
+$(document).on "turboboost:success", (e, flash) ->
   console.log(flash) # -> {'notice': 'Post was successfully created.'}
 ```
 
-You may also prevent redirecting on any Turboform by adding the attribute `data-no-turboform-redirect` to your form element if you just want to handle the response and returned flash messages manually:
+You may also prevent redirecting on any Turboboost by adding the attribute `data-no-turboboost-redirect` to your form element if you just want to handle the response and returned flash messages manually:
 
 #### Scoped response rendering
 
-Turboforms also provides some extra rendering options for letting you render your form responses at specific locations in the DOM:
+Turboboost also provides some extra rendering options for letting you render your form responses at specific locations in the DOM:
 
 |Rails controller render option | jQuery function|
 |-------------------------------|:---------------|
