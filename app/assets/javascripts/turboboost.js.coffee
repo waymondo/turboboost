@@ -38,7 +38,10 @@ turboboostComplete = (e, resp) ->
     enableForm $el if isForm
     $el.trigger "turboboost:error", tryJSONParse resp.responseText
 
-turboboostFormBeforeSend = (e, xhr, settings) ->
+turboboostBeforeSend = (e, xhr, settings) ->
+  xhr.setRequestHeader('X-Turboboost', '1')
+  isForm = @nodeName is "FORM"
+  return e.stopPropagation() unless isForm
   disableForm $(@)
   if settings.type == "GET"
     Turbolinks.visit [@action, $(@).serialize()].join("?")
@@ -61,8 +64,6 @@ maybeInsertSuccessResponseBody = (resp) ->
     $(scope).prepend(resp.responseText)
 
 $(document)
-  .on("ajax:beforeSend", turboboostable, (e, xhr, settings) ->
-    xhr.setRequestHeader('X-Turboboost', '1'))
-  .on("ajax:beforeSend", "form#{turboboostable}", turboboostFormBeforeSend)
+  .on("ajax:beforeSend", turboboostable, turboboostBeforeSend)
   .on("ajax:complete", turboboostable, turboboostComplete)
   .on("turboboost:error", "form#{turboboostable}", turboboostFormError)
