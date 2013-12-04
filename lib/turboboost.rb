@@ -132,6 +132,18 @@ module Turboboost
 
       form_tag_without_data_turboboost(record_or_name_or_array, *(args << options), &proc)
     end
+
+    def convert_options_to_data_attributes(options, html_options)
+      if html_options
+        html_options = html_options.stringify_keys
+        if turboboost = html_options.delete("turboboost")
+          html_options["data-remote"] = "true"
+          html_options["data-turboboost"] = "true"
+        end
+      end
+      super options, html_options
+    end
+
   end
 
   class Engine < Rails::Engine
