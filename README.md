@@ -34,7 +34,7 @@ Turboboost extends the power of Turbolinks into the forms of your Rails app and 
 ### Installation
 
 ``` ruby
-gem "turboboost", github: "waymondo/turboboost"
+gem "turboboost"
 ```
 
 Put that in your `Gemfile` and `bundle install`. In your `application.js` require it after `jquery_ujs` and `turbolinks`:

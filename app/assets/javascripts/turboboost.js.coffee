@@ -38,6 +38,8 @@ turboboostComplete = (e, resp) ->
     enableForm $el if isForm
     $el.trigger "turboboost:error", tryJSONParse resp.responseText
 
+  $el.trigger "turboboost:complete"
+
 turboboostBeforeSend = (e, xhr, settings) ->
   xhr.setRequestHeader('X-Turboboost', '1')
   isForm = @nodeName is "FORM"
