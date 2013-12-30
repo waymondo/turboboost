@@ -60,6 +60,7 @@ module Turboboost
       [:replace, :within, :append, :prepend].each do |h|
         response.headers["X-#{h.capitalize}"] = options[h] if options[h]
       end
+      response.headers["X-Flash"] = flash.to_hash.to_json if !flash.empty?
       self.response_body = render_to_body(options)
     end
 
