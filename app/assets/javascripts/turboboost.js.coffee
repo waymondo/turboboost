@@ -15,6 +15,7 @@ disableForm = ($form) ->
 
 turboboostFormError = (e, errors) ->
   return if !Turboboost.insertErrors
+  errors = tryJSONParse errors 
   errors = [Turboboost.defaultError] if !errors.length
   $form = $(e.target)
   $el = $form.find(errID)
@@ -36,7 +37,7 @@ turboboostComplete = (e, resp) ->
 
   if resp.status in [400..599]
     enableForm $el if isForm
-    $el.trigger "turboboost:error", tryJSONParse resp.responseText
+    $el.trigger "turboboost:error", resp.responseText
 
   $el.trigger "turboboost:complete"
 
