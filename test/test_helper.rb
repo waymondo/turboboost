@@ -35,6 +35,19 @@ class ActiveSupport::TestCase
   end
 end
 
+class ActionView::TestCase
+
+  def default_url_options; {}; end
+
+  include Turboboost::Routes.url_helpers
+  include Turboboost::FormHelper
+
+  setup do
+    @controller = ApplicationController
+  end
+
+end
+
 posts_table = %{CREATE TABLE posts (id INTEGER PRIMARY KEY, title VARCHAR(5), user_id INTEGER);}
 ActiveRecord::Base.connection.execute(posts_table)
 
