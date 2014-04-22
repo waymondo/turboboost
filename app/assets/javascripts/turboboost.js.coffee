@@ -1,3 +1,7 @@
+#= require jquery
+#= require jquery_ujs
+#= require turbolinks
+
 @Turboboost =
   insertErrors: false
   defaultError: "Sorry, there was an error."
@@ -15,7 +19,7 @@ disableForm = ($form) ->
 
 turboboostFormError = (e, errors) ->
   return if !Turboboost.insertErrors
-  errors = tryJSONParse errors 
+  errors = tryJSONParse errors
   errors = [Turboboost.defaultError] if !errors.length
   $form = $(e.target)
   $el = $form.find(errID)
