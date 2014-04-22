@@ -89,6 +89,9 @@ module Turboboost
       turboboost_flash = {}
       flash_types = defined?(self.class._flash_types) ? self.class._flash_types : [:alert, :notice]
       flash_types.each do |flash_type|
+        if type = flash.delete(type)
+          turboboost_flash.update(type)
+        end
         if type = response_status_and_flash.delete(flash_type)
           turboboost_flash[flash_type] = type
         end
