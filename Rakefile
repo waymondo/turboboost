@@ -12,4 +12,4 @@ Rake::TestTask.new(:test) do |t|
 end
 
 # Make test the default task.
-task :default => :test
+task default: :test
