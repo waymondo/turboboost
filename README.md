@@ -32,9 +32,7 @@ or add the data attribute manually:
 <form data-turboboost> ...
 ```
 
-### Usage
-
-#### Redirection with Turbolinks
+### Redirection with Turbolinks
 
 In its simplest server-side implementation, a basic Turboboost controller action with redirection might look like this:
 
@@ -47,7 +45,9 @@ end
 
 If the post is successfully created through a Turboboost-ed form, the app will visit the post's URL with Turbolinks. Otherwise, the redirect will happen like normal.
 
-#### Error Handling and Flash Messages
+If a Turboboost form makes a GET request, it will serialize the form's data and then visit its action URL with the data serialized as parameters with Turbolinks.
+
+### Error Handling and Flash Messages
 
 If the post in our example above is invalid, no redirect will happen and a `rescue_from` handler will pass the errors to JavaScript through the `turboboost:error` event:
 
@@ -100,7 +100,7 @@ $(document).on "turboboost:success", (e, flash) ->
   console.log(flash) # -> {'notice': 'Post was successfully created.'}
 ```
 
-#### Scoped response rendering
+### Scoped response rendering
 
 Turboboost also provides some options for rendering AJAX responses at specific locations in the DOM:
 
