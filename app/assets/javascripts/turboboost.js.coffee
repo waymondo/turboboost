@@ -17,6 +17,12 @@ enableForm = ($form) ->
 disableForm = ($form) ->
   $form.find("[type='submit']").attr('disabled', 'disabled')
 
+tryJSONParse = (str) ->
+  try
+    JSON.parse str
+  catch e
+    null
+
 turboboostFormError = (e, errors) ->
   return if !Turboboost.insertErrors
   errors = tryJSONParse errors
@@ -33,6 +39,7 @@ turboboostComplete = (e, resp) ->
 
   if resp.status in [200..299]
     $el.trigger "turboboost:success", tryJSONParse resp.getResponseHeader('X-Flash')
+    $el.find(errID).remove() if Turboboost.insertErrors and isForm
     if (location = resp.getResponseHeader('Location')) and !$el.attr('data-no-turboboost-redirect')
       Turbolinks.visit(location)
     else
@@ -50,15 +57,9 @@ turboboostBeforeSend = (e, xhr, settings) ->
   isForm = @nodeName is "FORM"
   return e.stopPropagation() unless isForm
   disableForm $(@)
-  if settings.type == "GET"
+  if settings.type is "GET"
     Turbolinks.visit [@action, $(@).serialize()].join("?")
     return false
-
-tryJSONParse = (str) ->
-  try
-    JSON.parse str
-  catch e
-    null
 
 maybeInsertSuccessResponseBody = (resp) ->
   if (scope = resp.getResponseHeader('X-Within'))
