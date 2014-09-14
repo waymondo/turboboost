@@ -47,7 +47,7 @@ If the post is successfully created through a Turboboost-ed form, the app will v
 
 If a Turboboost form makes a GET request, it will serialize the form's data and then visit its action URL with the data serialized as parameters with Turbolinks.
 
-### Error Handling and Flash Messages
+### Error handling
 
 If the post in our example above is invalid, no redirect will happen and a `rescue_from` handler will pass the errors to JavaScript through the `turboboost:error` event:
 
@@ -73,6 +73,8 @@ def create
 end
 ```
 
+#### Automatic error message insertion
+
 Optionally, Turboboost can render returned errors with the same HTML structure used in the default Rails generators and prepend it to the form. The HTML structure looks like this:
 
 ``` html
@@ -91,6 +93,14 @@ To turn it on:
 Turboboost.insertErrors = true
 ```
 
+By default, this will prepend the error message to the form. Other values can be "append", "beforeSubmit", "afterSubmit", or any jQuery selector within the form:
+
+``` coffeescript
+Turboboost.insertErrors = '.error-wrap'
+```
+
+#### Error internationalization
+
 Currently Turboboost will handle invalid `ActiveRecord` and `ActiveModel` error messages as well as basic HTTP error messages. For ActiveRecord validations, it will use [Rails' I18n lookup](http://guides.rubyonrails.org/i18n.html#translations-for-active-record-models) to retrieve the message wording. For other raised exceptions, you can customize the basic wording using the I18n namespace format `turboboost.errors.#{error.class.name}`:
 
 ``` yaml
@@ -99,6 +109,8 @@ en:
     errors:
       "ActiveRecord::RecordNotFound": "Shoot, didn't find anything."
 ```
+
+### Ajax flash message handling
 
 There is also a `turboboost:success` event that is triggered and passed a hash of all current flash messages if they are present:
 

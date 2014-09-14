@@ -30,7 +30,17 @@ turboboostFormError = (e, errors) ->
   $form = $(e.target)
   $el = $form.find(errID)
   if !$el.length
-    $form.prepend $el = $("<div id='#{errID.substr(1)}'></div>")
+    $el = $("<div id='#{errID.substr(1)}'></div>")
+    switch Turboboost.insertErrors
+      when "append" then $form.append($el)
+      when "beforeSubmit" then $form.find("[type='submit']").before($el)
+      when "afterSubmit" then $form.find("[type='submit']").after($el)
+      when true then $form.prepend($el)
+      else
+        if Turboboost.insertErrors.match(/^\W+/)
+          $form.find(Turboboost.insertErrors).html($el)
+        else
+          $form.prepend($el)
   $el.html errTemplate(errors)
 
 turboboostComplete = (e, resp) ->
