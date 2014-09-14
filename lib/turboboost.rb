@@ -32,7 +32,7 @@ module Turboboost
         if defined?(error.record)
           render_turboboost_errors_for(error.record)
         else
-          render json: [error.message], status: error_status || 500
+          render json: [error.message], status: error_status || 500, root: false
         end
       else
         raise error
