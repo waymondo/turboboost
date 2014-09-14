@@ -28,6 +28,7 @@ module Turboboost
     def turboboost_error_handler(error)
       if request.xhr? and request.headers['HTTP_X_TURBOBOOST']
         error_status = CATCHABLE_ERRORS[error.class.name]
+        response.headers["X-Turboboosted"] = "1"
         if defined?(error.record)
           render_turboboost_errors_for(error.record)
         else
@@ -44,7 +45,7 @@ module Turboboost
 
     def head_turboboost_success(turboboost_flash={})
       turboboost_flash = _turboboost_get_flash_messages(turboboost_flash)
-      head :ok, "X-Flash" => turboboost_flash.to_json
+      head :ok, "X-Flash" => turboboost_flash.to_json, "X-Turboboosted" => "1"
     end
 
     def render(*args, &block)
@@ -61,6 +62,7 @@ module Turboboost
         response.headers["X-#{h.capitalize}"] = options[h] if options[h]
       end
       response.headers["X-Flash"] = flash.to_hash.to_json if !flash.empty?
+      response.headers["X-Turboboosted"] = "1"
       self.response_body = render_to_body(options)
     end
 
@@ -152,13 +154,12 @@ module Turboboost
 
   class Engine < Rails::Engine
     initializer :turboboost do
-       ActionView::Base.send :include, Turboboost::FormHelper
-     end
+      ActionView::Base.send :include, Turboboost::FormHelper
+    end
   end
 
 end
 
-# ActionView::Base.send :include, Turboboost::FormHelper
 ActiveSupport.on_load(:action_controller) do
   include Turboboost::Controller
 end
