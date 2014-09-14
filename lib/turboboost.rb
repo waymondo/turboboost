@@ -32,7 +32,9 @@ module Turboboost
         if defined?(error.record)
           render_turboboost_errors_for(error.record)
         else
-          render json: [error.message], status: error_status || 500, root: false
+          translation = I18n.t("turboboost.errors.#{error.class.name}")
+          message = translation.match("translation missing: (.+)") ? error.class.name : translation
+          render json: [message], status: error_status || 500, root: false
         end
       else
         raise error

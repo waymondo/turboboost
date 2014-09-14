@@ -91,7 +91,14 @@ To turn it on:
 Turboboost.insertErrors = true
 ```
 
-Currently Turboboost will handle invalid `ActiveRecord` and `ActiveModel` error messages as well as basic HTTP error messages.
+Currently Turboboost will handle invalid `ActiveRecord` and `ActiveModel` error messages as well as basic HTTP error messages. For ActiveRecord validations, it will use [Rails' I18n lookup](http://guides.rubyonrails.org/i18n.html#translations-for-active-record-models) to retrieve the message wording. For other raised exceptions, you can customize the basic wording using the I18n namespace format `turboboost.errors.#{error.class.name}`:
+
+``` yaml
+en:
+  turboboost:
+    errors:
+      "ActiveRecord::RecordNotFound": "Shoot, didn't find anything."
+```
 
 There is also a `turboboost:success` event that is triggered and passed a hash of all current flash messages if they are present:
 
