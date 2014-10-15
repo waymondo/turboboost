@@ -130,7 +130,7 @@ Turboboost also provides some options for rendering AJAX responses at specific l
 |`:prepend`                     |`prepend()`     |
 |`:append`                      |`append()`      |
 
-The value can be any jQuery selector. Examples usage:
+The value can be any jQuery selector. Example usage:
 
 ``` ruby
 respond_to do |format|
