@@ -83,7 +83,12 @@ module Turboboost
       # set flash for turbo redirect headers
       turboboost_flash = _turboboost_get_flash_messages(response_status_and_flash)
 
-      self.location = _compute_redirect_to_location(options)
+      if Rails.version < "4.2"
+        self.location = _compute_redirect_to_location(options)
+      else
+        self.location = _compute_redirect_to_location(request, options)
+      end
+
       head :ok, "X-Flash" => turboboost_flash.to_json
 
       flash.update(turboboost_flash) # set flash for rendered view
