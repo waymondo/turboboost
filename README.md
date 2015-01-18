@@ -1,6 +1,6 @@
 ## Turboboost
 
-Turboboost extends the power of Turbolinks into the forms of your Rails app and provides additional convenient AJAX handlers for forms and links. It aims to be a seemless and logical addition to any Turbolinks-rocking Rails 3.2+/4+ app. Currently it depends on jQuery. The main features are:
+Turboboost extends the power of Turbolinks into the forms of your Rails app and provides additional convenient AJAX handlers for forms and links. It aims to be a seemless and logical addition to any Turbolinks-rocking Rails 3.2/4+ app. Currently it depends on jQuery. The main features are:
 
 * Form response redirection is handled by Turbolinks.
 * Customizable success and error handling through registered JavaScript, with support for Rails' Flash and optional error rendering built-in.
@@ -11,7 +11,7 @@ Turboboost extends the power of Turbolinks into the forms of your Rails app and 
 In your `Gemfile`:
 
 ``` ruby
-gem "turboboost"
+gem 'turboboost'
 ```
 
 In your `application.js`:
@@ -29,7 +29,7 @@ Then in your view files, add `turboboost: true` to your form helpers:
 or add the data attribute manually:
 
 ```
-<form data-turboboost> ...
+<form data-remote data-turboboost> ...
 ```
 
 ### Redirection with Turbolinks
@@ -73,6 +73,8 @@ def create
 end
 ```
 
+Check out the [test controllers](https://github.com/waymondo/turboboost/tree/master/test/controllers) for more examples of controller syntax.
+
 #### Automatic error message insertion
 
 Optionally, Turboboost can render returned errors with the same HTML structure used in the default Rails generators and prepend it to the form. The HTML structure looks like this:
@@ -90,18 +92,18 @@ Optionally, Turboboost can render returned errors with the same HTML structure u
 To turn it on:
 
 ``` coffeescript
-Turboboost.insertErrors = true
-```
-
-By default, this will prepend the error message to the form. Other values can be "append", "beforeSubmit", "afterSubmit", or any jQuery selector within the form:
-
-``` coffeescript
-Turboboost.insertErrors = '.error-wrap'
+Turboboost.insertErrors = true # same as 'prepend'
+# other possible values:
+# Turboboost.insertErrors = 'append'
+# Turboboost.insertErrors = 'beforeSubmit'
+# Turboboost.insertErrors = 'afterSubmit'
+# can also be a jQuery selector:
+# Turboboost.insertErrors = '.error-wrap'
 ```
 
 #### Error internationalization
 
-Currently Turboboost will handle invalid `ActiveRecord` and `ActiveModel` error messages as well as basic HTTP error messages. For ActiveRecord validations, it will use [Rails' I18n lookup](http://guides.rubyonrails.org/i18n.html#translations-for-active-record-models) to retrieve the message wording. For other raised exceptions, you can customize the basic wording using the I18n namespace format `turboboost.errors.#{error.class.name}`:
+Turboboost will handle invalid `ActiveRecord` and `ActiveModel` error messages as well as basic HTTP error messages. For ActiveRecord validations, it will use [Rails' I18n lookup](http://guides.rubyonrails.org/i18n.html#translations-for-active-record-models) to retrieve the message wording. For other raised exceptions, you can customize the basic wording using the I18n namespace format `turboboost.errors.#{error.class.name}`:
 
 ``` yaml
 en:
@@ -112,7 +114,7 @@ en:
 
 ### Ajax flash message handling
 
-There is also a `turboboost:success` event that is triggered and passed a hash of all current flash messages if they are present:
+There is also a `turboboost:success` event that is triggered and passed all current flash messages if they are present:
 
 ``` coffeescript
 $(document).on "turboboost:success", (e, flash) ->
