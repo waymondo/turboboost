@@ -53,3 +53,29 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal @response.body.strip, ['Email is invalid'].to_json
   end
 end
+
+class ItemsControllerTest < ActionController::TestCase
+  tests ItemsController
+
+  setup do
+    @request.headers['X-Turboboost'] = '1'
+  end
+
+  test 'On a successful turboboost post request, return rendering options in the headers' do
+    xhr :post, :create, item: { name: 'Bottle' }
+
+    assert_equal @response.headers['Location'], nil
+    assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'Item was successfully created.'
+    assert_equal @response.headers['X-Within'], '#sidebar'
+    assert_equal @response.body.strip, "<div id=\"item\">Bottle</div>"
+  end
+
+  test 'On a successful turboboost update using render nothing: true, still return flash headers' do
+    @item = Item.create(name: 'Opener')
+    xhr :put, :update, id: @item.id, item: { name: 'Bottle Opener' }
+
+    assert_equal @response.headers['Location'], nil
+    assert_equal @response.body.strip, ''
+    assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'Item updated.'
+  end
+end

@@ -23,10 +23,12 @@ Turboboost::Routes = ActionDispatch::Routing::RouteSet.new
 Turboboost::Routes.draw do
   resources 'posts'
   resources 'users'
+  resources 'items'
 end
 
 class ApplicationController < ActionController::Base
   include Turboboost::Routes.url_helpers
+  self.view_paths = File.join(File.dirname(__FILE__), 'views')
 end
 
 class ActiveSupport::TestCase
@@ -65,4 +67,13 @@ class User < ActiveRecord::Base
 
   validates :name, presence: true
   validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, allow_blank: false }
+end
+
+items_table = %{CREATE TABLE items (id INTEGER PRIMARY KEY, name VARCHAR(5));}
+ActiveRecord::Base.connection.execute(items_table)
+
+class Item < ActiveRecord::Base
+  attr_accessor :name
+
+  validates :name, presence: true
 end
