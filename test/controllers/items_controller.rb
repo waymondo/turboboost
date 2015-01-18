@@ -1,15 +1,13 @@
 class ItemsController < ApplicationController
   def create
     @item = Item.create!(item_params)
-    flash[:notice] = 'Item was successfully created.'
-    render :show, within: '#sidebar'
+    render :show, within: '#sidebar', flash: { notice: 'Item was successfully created.' }
   end
 
   def update
     item = Item.find(params[:id])
     item.update_attributes!(item_params)
-    flash[:notice] = 'Item updated.'
-    render nothing: true
+    render nothing: true, notice: 'Item updated.'
   end
 
   private
