@@ -1,0 +1,4 @@
+en:
+  turboboost:
+    errors:
+      "ActiveRecord::RecordNotFound": "Shoot, didn't find anything."

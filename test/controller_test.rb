@@ -61,6 +61,12 @@ class ItemsControllerTest < ActionController::TestCase
     @request.headers['X-Turboboost'] = '1'
   end
 
+  test 'On a failed turboboost get request, return custom internationalization messaging' do
+    xhr :get, :show, id: 123
+    i18n_message = I18n.t("turboboost.errors.ActiveRecord::RecordNotFound")
+    assert_equal @response.body.strip, [i18n_message].to_json
+  end
+
   test 'On a successful turboboost post request, return rendering options in the headers' do
     xhr :post, :create, item: { name: 'Bottle' }
 

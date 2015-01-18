@@ -15,6 +15,10 @@ require 'responders' if Rails.version >= '4.2'
 require 'strong_parameters' if Rails.version < '4.0'
 require 'turboboost'
 
+I18n.enforce_available_locales = true
+I18n.load_path << File.expand_path('../locales/en.yml', __FILE__)
+I18n.reload!
+
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
 class TestApp < Rails::Application; end

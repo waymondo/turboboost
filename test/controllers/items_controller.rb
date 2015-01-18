@@ -1,4 +1,9 @@
 class ItemsController < ApplicationController
+  def show
+    item = Item.find(params[:id])
+    render json: item
+  end
+
   def create
     @item = Item.create!(item_params)
     render :show, within: '#sidebar', flash: { notice: 'Item was successfully created.' }
