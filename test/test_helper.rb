@@ -11,6 +11,8 @@ require 'action_controller'
 require 'action_controller/railtie'
 require 'rails/test_help'
 require 'awesome_print'
+require 'responders' if Rails.version >= '4.2'
+require 'strong_parameters' if Rails.version < '4.0'
 require 'turboboost'
 
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'

@@ -40,7 +40,7 @@ class UsersControllerTest < ActionController::TestCase
   test 'On a successful turboboost request, return an empty response with headers containing the redirect location and flash message' do
     xhr :post, :create, user: { name: 'Mike', email: 'mike@mike.com' }
 
-    assert @response.body.strip.blank?
+    assert_equal @response.body.strip.blank?, true
     assert_equal flash[:notice], 'User was successfully created.'
     assert_equal @response.headers['Location'], user_url(1)
     assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'User was successfully created.'
