@@ -57,7 +57,7 @@ module Turboboost
 
     def turboboost_render(*args, &block)
       options = _normalize_render(*args, &block)
-      [:replace, :within, :append, :prepend].each do |h|
+      [:replace, :within, :append, :prepend, :before, :after].each do |h|
         response.headers["X-#{h.capitalize}"] = options[h] if options[h]
       end
       response.headers['X-Flash'] = _turboboost_get_flash_messages(options).to_json

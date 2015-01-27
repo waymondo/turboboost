@@ -131,6 +131,8 @@ Turboboost also provides some options for rendering AJAX responses at specific l
 |`:replace`                     |`replaceWith()` |
 |`:prepend`                     |`prepend()`     |
 |`:append`                      |`append()`      |
+|`:before`                      |`before()`      |
+|`:after`                       |`after()`       |
 
 The value can be any jQuery selector. Example usage:
 

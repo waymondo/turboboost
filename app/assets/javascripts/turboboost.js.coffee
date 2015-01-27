@@ -80,6 +80,10 @@ maybeInsertSuccessResponseBody = (resp) ->
     $(scope).append(resp.responseText)
   else if (scope = resp.getResponseHeader('X-Prepend'))
     $(scope).prepend(resp.responseText)
+  else if (scope = resp.getResponseHeader('X-Before'))
+    $(scope).before(resp.responseText)
+  else if (scope = resp.getResponseHeader('X-After'))
+    $(scope).after(resp.responseText)
 
 $(document)
   .on("ajax:beforeSend", turboboostable, turboboostBeforeSend)
