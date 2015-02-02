@@ -66,9 +66,10 @@ turboboostBeforeSend = (e, xhr, settings) ->
   xhr.setRequestHeader('X-Turboboost', '1')
   isForm = @nodeName is "FORM"
   return e.stopPropagation() unless isForm
-  disableForm $(@)
-  if settings.type is "GET"
-    Turbolinks.visit [@action, $(@).serialize()].join("?")
+  $el = $(@)
+  disableForm $el
+  if settings.type is "GET" and !$el.attr('data-no-turboboost-redirect')
+    Turbolinks.visit [@action, $el.serialize()].join("?")
     return false
 
 maybeInsertSuccessResponseBody = (resp) ->
