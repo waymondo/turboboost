@@ -4,6 +4,7 @@
 
 @Turboboost =
   insertErrors: false
+  handleFormDisabling: true
   defaultError: "Sorry, there was an error."
 
 turboboostable = "[data-turboboost]"
@@ -12,10 +13,10 @@ errTemplate = (errors) ->
   "<ul><li>#{$.makeArray(errors).join('</li><li>')}</li></ul>"
 
 enableForm = ($form) ->
-  $form.find("[type='submit']").removeAttr('disabled')
+  $form.find("[type='submit']").removeAttr('disabled').data('turboboostDisabled', false)
 
 disableForm = ($form) ->
-  $form.find("[type='submit']").attr('disabled', 'disabled')
+  $form.find("[type='submit']").attr('disabled', 'disabled').data('turboboostDisabled', true)
 
 tryJSONParse = (str) ->
   try
@@ -53,11 +54,11 @@ turboboostComplete = (e, resp) ->
     if (location = resp.getResponseHeader('Location')) and !$el.attr('data-no-turboboost-redirect')
       Turbolinks.visit(location)
     else
-      enableForm $el if isForm
+      enableForm $el if isForm and Turboboost.handleFormDisabling
       maybeInsertSuccessResponseBody(resp)
 
   if resp.status in [400..599]
-    enableForm $el if isForm
+    enableForm $el if isForm and Turboboost.handleFormDisabling
     $el.trigger "turboboost:error", resp.responseText
 
   $el.trigger "turboboost:complete"
@@ -67,7 +68,7 @@ turboboostBeforeSend = (e, xhr, settings) ->
   isForm = @nodeName is "FORM"
   return e.stopPropagation() unless isForm
   $el = $(@)
-  disableForm $el
+  disableForm $el if Turboboost.handleFormDisabling
   if settings.type is "GET" and !$el.attr('data-no-turboboost-redirect')
     Turbolinks.visit [@action, $el.serialize()].join("?")
     return false
@@ -86,7 +87,13 @@ maybeInsertSuccessResponseBody = (resp) ->
   else if (scope = resp.getResponseHeader('X-After'))
     $(scope).after(resp.responseText)
 
+maybeReenableForms = ->
+  return unless Turboboost.handleFormDisabling
+  $("form#{turboboostable} input[type='submit']").each ->
+    enableForm $(@).closest('form') if $(@).data('turboboostDisabled')
+
 $(document)
   .on("ajax:beforeSend", turboboostable, turboboostBeforeSend)
   .on("ajax:complete", turboboostable, turboboostComplete)
   .on("turboboost:error", "form#{turboboostable}", turboboostFormError)
+  .on("page:restore", maybeReenableForms)
