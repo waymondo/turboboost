@@ -44,7 +44,7 @@ turboboostComplete = (e, resp) ->
   $el = $(@)
   isForm = @nodeName is "FORM"
 
-  if resp.status in [200..299]
+  if 200 <= resp.status < 300
     $el.trigger "turboboost:success", tryJSONParse resp.getResponseHeader('X-Flash')
     $el.find(errID).remove() if Turboboost.insertErrors and isForm
     if (location = resp.getResponseHeader('Location')) and !$el.attr('data-no-turboboost-redirect')
@@ -55,8 +55,7 @@ turboboostComplete = (e, resp) ->
     else
       enableForm $el if isForm and Turboboost.handleFormDisabling
       maybeInsertSuccessResponseBody(resp)
-
-  if resp.status in [400..599]
+  else if 400 <= resp.status  < 600
     enableForm $el if isForm and Turboboost.handleFormDisabling
     $el.trigger "turboboost:error", resp.responseText
 
