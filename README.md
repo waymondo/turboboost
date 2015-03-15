@@ -8,25 +8,41 @@ Turboboost extends the power of Turbolinks into the forms of your Rails app and 
 
 ### Installation ###
 
-In your `Gemfile`:
+1. In your `Gemfile`:
 
 ``` ruby
 gem 'turboboost'
 ```
 
-In your `application.js`:
+Or to live on the very edge:
+
+``` ruby
+gem 'turboboost', github: 'waymondo/turboboost'
+```
+
+2. In your `application.js`:
 
 ``` javascript
 //= require turboboost
 ```
 
-Then in your view files, add `turboboost: true` to your form helpers:
+This will also require jQuery, [jquery-ujs](https://github.com/rails/jquery-ujs), Turbolinks, if not already required. If you wish to register your scripts manually, you can like so:
+
+``` javascript
+//= require path/to/vendored/jquery
+//= require jquery_ujs
+//= require turbolinks
+//= require turboboost/turboboost
+```
+
+3. Then in your view files, add `turboboost: true` to your form / link helpers:
 
 ```
 = form_for :resource, turboboost: true do |f| ...
+= link_to "Turboboost-ed", resource_path, turboboost: true
 ```
 
-or add the data attribute manually:
+Or add the data attribute manually:
 
 ```
 <form data-remote data-turboboost> ...
@@ -53,7 +69,7 @@ If a Turboboost form makes a GET request, it will serialize the form's data and 
 
 To prevent double-clicks on submit buttons from firing the form's action twice, Turboboost comes with automatic form disabling/enabling by default. When you restore a page from Turbolinks' cache, it will re-enable any submit buttons that it had disabled. You can disable this behavior and control your form's submittable state manually with:
 
-``` coffeescript
+``` coffee
 Turboboost.handleFormDisabling = false
 ```
 
@@ -61,7 +77,7 @@ Turboboost.handleFormDisabling = false
 
 If the post in our example above is invalid, no redirect will happen and a `rescue_from` handler will pass the errors to JavaScript through the `turboboost:error` event:
 
-``` coffeescript
+``` coffee
 $(document).on "turboboost:error", (e, errors) ->
   console.log(errors) # <- JSON array of errors messages
 ```

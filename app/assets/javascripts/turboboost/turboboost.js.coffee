@@ -1,7 +1,3 @@
-#= require jquery
-#= require jquery_ujs
-#= require turbolinks
-
 @Turboboost =
   insertErrors: false
   handleFormDisabling: true
