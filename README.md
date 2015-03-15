@@ -8,7 +8,7 @@ Turboboost extends the power of Turbolinks into the forms of your Rails app and 
 
 ### Installation ###
 
-1. In your `Gemfile`:
+###### In your `Gemfile` ######
 
 ``` ruby
 gem 'turboboost'
@@ -20,7 +20,9 @@ Or to live on the very edge:
 gem 'turboboost', github: 'waymondo/turboboost'
 ```
 
-2. In your `application.js`:
+Then `bundle install`.
+
+###### In your `application.js` ######
 
 ``` javascript
 //= require turboboost
@@ -35,17 +37,22 @@ This will also require jQuery, [jquery-ujs](https://github.com/rails/jquery-ujs)
 //= require turboboost/turboboost
 ```
 
-3. Then in your view files, add `turboboost: true` to your form / link helpers:
+###### In your view files ######
+
+Add `turboboost: true` to your form / link helpers:
+
+``` erb
+<%= form_for :resource, turboboost: true do |f| ... %>
+
+<%= link_to "Turboboosted Link", resource_path, turboboost: true %>
+```
+
+Or you can add the data attribute manually:
 
 ```
-= form_for :resource, turboboost: true do |f| ...
-= link_to "Turboboost-ed", resource_path, turboboost: true
-```
+<form data-remote data-turboboost action="/foo"></form>
 
-Or add the data attribute manually:
-
-```
-<form data-remote data-turboboost> ...
+<a data-remote data-turboboost href="/bar"></a>
 ```
 
 ### Redirection with Turbolinks ###
