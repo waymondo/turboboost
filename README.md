@@ -8,7 +8,7 @@ Turboboost extends the power of Turbolinks into the forms of your Rails app and 
 
 ### Installation ###
 
-###### In your `Gemfile` ######
+##### In your `Gemfile` #####
 
 ``` ruby
 gem 'turboboost'
@@ -22,7 +22,7 @@ gem 'turboboost', github: 'waymondo/turboboost'
 
 Then `bundle install`.
 
-###### In your `application.js` ######
+##### In your `application.js` #####
 
 ``` javascript
 //= require turboboost
@@ -37,7 +37,7 @@ This will also require jQuery, [jquery-ujs](https://github.com/rails/jquery-ujs)
 //= require turboboost/turboboost
 ```
 
-###### In your view files ######
+##### In your view files #####
 
 Add `turboboost: true` to your form / link helpers:
 

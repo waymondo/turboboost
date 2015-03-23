@@ -48,7 +48,10 @@ turboboostComplete = (e, resp) ->
     $el.trigger "turboboost:success", tryJSONParse resp.getResponseHeader('X-Flash')
     $el.find(errID).remove() if Turboboost.insertErrors and isForm
     if (location = resp.getResponseHeader('Location')) and !$el.attr('data-no-turboboost-redirect')
+      e.preventDefault()
+      e.stopPropagation()
       Turbolinks.visit(location)
+      return
     else
       enableForm $el if isForm and Turboboost.handleFormDisabling
       maybeInsertSuccessResponseBody(resp)
