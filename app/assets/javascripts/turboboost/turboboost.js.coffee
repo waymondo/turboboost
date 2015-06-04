@@ -74,19 +74,18 @@ turboboostBeforeSend = (e, xhr, settings) ->
     Turbolinks.visit [@action, $el.serialize()].join("?")
     return false
 
+renderFunctionForOption = (option) ->
+  switch option
+    when 'within' then 'html'
+    when 'replace' then 'replaceWith'
+    else
+      option
+
 maybeInsertSuccessResponseBody = (resp) ->
-  if (scope = resp.getResponseHeader('X-Within'))
-    $(scope).html(resp.responseText)
-  else if (scope = resp.getResponseHeader('X-Replace'))
-    $(scope).replaceWith(resp.responseText)
-  else if (scope = resp.getResponseHeader('X-Append'))
-    $(scope).append(resp.responseText)
-  else if (scope = resp.getResponseHeader('X-Prepend'))
-    $(scope).prepend(resp.responseText)
-  else if (scope = resp.getResponseHeader('X-Before'))
-    $(scope).before(resp.responseText)
-  else if (scope = resp.getResponseHeader('X-After'))
-    $(scope).after(resp.responseText)
+  return unless (header = tryJSONParse(resp.getResponseHeader('X-Turboboost-Render')))
+  renderOption = Object.keys(header)[0]
+  renderFunction = renderFunctionForOption(renderOption)
+  $(header[renderOption])[renderFunction](resp.responseText)
 
 maybeReenableForms = ->
   return unless Turboboost.handleFormDisabling
