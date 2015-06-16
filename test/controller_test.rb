@@ -11,7 +11,11 @@ class PostsControllerTest < ActionController::TestCase
   test 'On a successful turboboost request, return an empty response with headers containing the redirect location and flash message' do
     xhr :post, :create, post: { title: 'Foobar', user_id: '1' }
 
-    assert @response.body.strip.blank?
+    if Rails.version =~ /^4/
+      assert_equal @response.body.strip.blank?, true
+    else
+      assert_redirected_to 'http://test.host/posts'
+    end
     assert_equal flash[:notice], 'Post was successfully created.'
     assert_equal @response.headers['Location'], posts_url
     assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'Post was successfully created.'
@@ -40,9 +44,14 @@ class UsersControllerTest < ActionController::TestCase
   test 'On a successful turboboost request, return an empty response with headers containing the redirect location and flash message' do
     xhr :post, :create, user: { name: 'Mike', email: 'mike@mike.com' }
 
-    assert_equal @response.body.strip.blank?, true
+    if Rails.version =~ /^4/
+      assert_equal @response.body.strip.blank?, true
+    else
+      assert_redirected_to 'http://test.host/users/1'
+    end
     assert_equal flash[:notice], 'User was successfully created.'
     assert_equal @response.headers['Location'], user_url(1)
+
     assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'User was successfully created.'
   end
 
@@ -63,7 +72,7 @@ class ItemsControllerTest < ActionController::TestCase
 
   test 'On a failed turboboost get request, return custom internationalization messaging' do
     xhr :get, :show, id: 123
-    i18n_message = I18n.t("turboboost.errors.ActiveRecord::RecordNotFound")
+    i18n_message = I18n.t('turboboost.errors.ActiveRecord::RecordNotFound')
     assert_equal @response.body.strip, [i18n_message].to_json
   end
 
@@ -72,7 +81,7 @@ class ItemsControllerTest < ActionController::TestCase
 
     assert_equal @response.headers['Location'], nil
     assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'Item was successfully created.'
-    assert_equal @response.headers['X-Within'], '#sidebar'
+    assert_equal @response.headers['X-Turboboost-Render'], { within: '#sidebar' }.to_json
     assert_equal @response.body.strip, "<div id=\"item\">Bottle</div>"
   end
 

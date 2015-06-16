@@ -8,6 +8,7 @@ gem "awesome_print"
 gem "sqlite3"
 gem "appraisal"
 gem "rails", "~> 3.2.21"
+gem "test-unit"
 gem "strong_parameters"
 
 gemspec :path => "../"

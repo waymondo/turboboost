@@ -1,5 +1,6 @@
 appraise 'rails-3-2' do
   gem 'rails', '~> 3.2.21'
+  gem 'test-unit'
   gem 'strong_parameters'
 end
 
