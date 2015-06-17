@@ -23,7 +23,7 @@ module Turboboost
     end
 
     def turboboost_error_handler(error)
-      if request.xhr? && request.headers['HTTP_X_TURBOBOOST']
+      if turboboost_request?
         error_status = CATCHABLE_ERRORS[error.class.name]
         response.headers['X-Turboboosted'] = '1'
         if defined?(error.record)
@@ -48,11 +48,11 @@ module Turboboost
     end
 
     def render(*args, &block)
-      if request.xhr? && request.headers['HTTP_X_TURBOBOOST']
-        turboboost_render(*args, &block)
-      else
-        super
-      end
+      turboboost_request? ? turboboost_render(*args, &block) : super
+    end
+
+    def turboboost_request?
+      request.xhr? && request.headers['HTTP_X_TURBOBOOST']
     end
 
     def turboboost_render(*args, &block)
@@ -66,11 +66,7 @@ module Turboboost
     end
 
     def redirect_to(options = {}, response_status_and_flash = {})
-      if request.xhr? && request.headers['HTTP_X_TURBOBOOST']
-        turboboost_redirect_to(options, response_status_and_flash)
-      else
-        super
-      end
+      turboboost_request? ? turboboost_redirect_to(options, response_status_and_flash) : super
     end
 
     def turboboost_redirect_to(options = {}, response_status_and_flash = {})
