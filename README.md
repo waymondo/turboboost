@@ -6,6 +6,10 @@ Turboboost extends the power of Turbolinks into the forms of your Rails app and 
 * Customizable success and error handling through registered JavaScript, with support for Rails' Flash and optional error rendering built-in.
 * Responses can also be rendered within a scoped DOM target using jQuery selectors.
 
+##### Disclaimer #####
+
+In recent history [Turbolinks](https://github.com/rails/turbolinks) has started to emulate some of these features with a slightly different approach. I will continue to support this library if people are still finding it useful.
+
 ### Installation ###
 
 ##### In your `Gemfile` #####
@@ -105,6 +109,8 @@ def create
   end
 end
 ```
+
+To note: If you are rendering a response from a Turboboost-ed form or link, you will need to [specify its rendering scope](https://github.com/waymondo/turboboost#scoped-response-rendering).
 
 Check out the [test controllers](https://github.com/waymondo/turboboost/tree/master/test/controllers) for more examples of controller syntax.
 
