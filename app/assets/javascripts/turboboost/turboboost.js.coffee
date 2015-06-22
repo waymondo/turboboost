@@ -20,24 +20,27 @@ tryJSONParse = (str) ->
   catch e
     null
 
+insertErrorContainer = ($form) ->
+  $el = $("<div id='#{errID.substr(1)}'></div>")
+  switch Turboboost.insertErrors
+    when "append" then $form.append($el)
+    when "beforeSubmit" then $form.find("[type='submit']").before($el)
+    when "afterSubmit" then $form.find("[type='submit']").after($el)
+    when true then $form.prepend($el)
+    else
+      if Turboboost.insertErrors.match(/^\W+/)
+        $form.find(Turboboost.insertErrors).html($el)
+      else
+        $form.prepend($el)
+  $el
+
 turboboostFormError = (e, errors) ->
   return if !Turboboost.insertErrors
   errors = tryJSONParse errors
   errors = [Turboboost.defaultError] if !errors.length
   $form = $(e.target)
   $el = $form.find(errID)
-  if !$el.length
-    $el = $("<div id='#{errID.substr(1)}'></div>")
-    switch Turboboost.insertErrors
-      when "append" then $form.append($el)
-      when "beforeSubmit" then $form.find("[type='submit']").before($el)
-      when "afterSubmit" then $form.find("[type='submit']").after($el)
-      when true then $form.prepend($el)
-      else
-        if Turboboost.insertErrors.match(/^\W+/)
-          $form.find(Turboboost.insertErrors).html($el)
-        else
-          $form.prepend($el)
+  $el = insertErrorContainer($form) if !$el.length
   $el.html errTemplate(errors)
 
 turboboostComplete = (e, resp) ->
