@@ -84,11 +84,20 @@ renderFunctionForOption = (option) ->
     else
       option
 
+restrictResponseToBody = (html) ->
+  if /<(html|body)/i.test(html)
+    doc = document.documentElement.cloneNode()
+    doc.innerHTML = html
+    doc.querySelector('body').innerHTML
+  else
+    html
+
 maybeInsertSuccessResponseBody = (resp) ->
   return unless (header = tryJSONParse(resp.getResponseHeader('X-Turboboost-Render')))
+  html = restrictResponseToBody(resp.responseText)
   renderOption = Object.keys(header)[0]
   renderFunction = renderFunctionForOption(renderOption)
-  $(header[renderOption])[renderFunction](resp.responseText)
+  $(header[renderOption])[renderFunction](html)
 
 maybeReenableForms = ->
   return unless Turboboost.handleFormDisabling
