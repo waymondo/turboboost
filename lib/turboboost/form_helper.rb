@@ -20,7 +20,7 @@ module Turboboost
       form_for_without_data_turboboost(record_or_name_or_array, *(args << options), &proc)
     end
 
-    def form_tag_with_data_turboboost(url_for_options={}, *args, &proc)
+    def form_tag_with_data_turboboost(url_for_options = {}, *args, &proc)
       options = args.extract_options!
 
       if options.key?(:turboboost) && options.delete(:turboboost)
