@@ -64,7 +64,7 @@ turboboostComplete = (e, resp) ->
 
   if $.contains(document.documentElement, $el[0])
     $el.trigger "turboboost:complete"
-  else
+  else if $inserted
     $inserted.trigger "turboboost:complete"
 
 turboboostBeforeSend = (e, xhr, settings) ->
