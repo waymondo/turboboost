@@ -5,7 +5,7 @@ require 'turboboost/version'
 module Turboboost
   class Engine < Rails::Engine
     initializer :turboboost do
-      ActionView::Base.send :include, Turboboost::FormHelper
+      ActionView::Base.send :prepend, Turboboost::FormHelper
     end
   end
 end
