@@ -1,6 +1,6 @@
 ## Turboboost ##
 
-Turboboost extends the power of Turbolinks into the forms of your Rails app and provides additional convenient AJAX handlers for forms and links. It aims to be a seemless and logical addition to any Turbolinks-rocking Rails 3.2/4+ app. Currently it depends on jQuery. The main features are:
+Turboboost extends the power of Turbolinks into the forms of your Rails app and provides additional convenient AJAX handlers for forms and links. It aims to be a seemless and logical addition to any Turbolinks-rocking Rails 3.2+ app. Currently it depends on jQuery. The main features are:
 
 * Form response redirection is handled by Turbolinks.
 * Customizable success and error handling through registered JavaScript, with support for Rails' Flash and optional error rendering built-in.
