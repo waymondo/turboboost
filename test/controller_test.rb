@@ -91,6 +91,8 @@ class ItemsControllerTest < ActionController::TestCase
 
     assert_equal @response.headers['Location'], nil
     assert_equal @response.body.strip, ''
-    assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'Item updated.'
+    assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'ééééé.'
+    # Ensure header has non-ascii Unicode
+    assert_equal "{\"notice\":\"\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9.\"}", @response.headers['X-Flash']
   end
 end

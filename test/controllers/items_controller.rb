@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 class ItemsController < ApplicationController
   def show
     item = Item.find(params[:id])
@@ -12,7 +14,7 @@ class ItemsController < ApplicationController
   def update
     item = Item.find(params[:id])
     item.update_attributes!(item_params)
-    render nothing: true, notice: 'Item updated.'
+    render nothing: true, notice: 'ééééé.'
   end
 
   private
