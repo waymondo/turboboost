@@ -44,7 +44,7 @@ module Turboboost
 
     def head_turboboost_success(turboboost_flash = {})
       turboboost_flash = _turboboost_get_flash_messages(turboboost_flash)
-      head :ok, 'X-Flash' => turboboost_flash.to_json, 'X-Turboboosted' => '1'
+      head :ok, 'X-Flash' => turboboost_sanitize_json(turboboost_flash), 'X-Turboboosted' => '1'
     end
 
     def render(*args, &block)
@@ -60,7 +60,7 @@ module Turboboost
       [:replace, :within, :append, :prepend, :before, :after].each do |h|
         response.headers['X-Turboboost-Render'] = { h => options[h] }.to_json if options[h]
       end
-      response.headers['X-Flash'] = _turboboost_get_flash_messages(options).to_json
+      response.headers['X-Flash'] = turboboost_sanitize_json(_turboboost_get_flash_messages(options))
       response.headers['X-Turboboosted'] = '1'
       self.response_body = render_to_body(options)
     end
@@ -82,7 +82,7 @@ module Turboboost
         self.location = _compute_redirect_to_location(request, options)
       end
 
-      head :ok, 'X-Flash' => turboboost_flash.to_json
+      head :ok, 'X-Flash' => turboboost_sanitize_json(turboboost_flash)
 
       flash.update(turboboost_flash) # set flash for rendered view
     end
@@ -102,6 +102,12 @@ module Turboboost
         turboboost_flash.update(other_flashes)
       end
       turboboost_flash
+    end
+
+    private
+
+    def turboboost_sanitize_json(data)
+      JSON.generate(data, :ascii_only => true)
     end
   end
 end
