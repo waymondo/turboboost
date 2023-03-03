@@ -9,9 +9,9 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'On a successful turboboost request, return an empty response with headers containing the redirect location and flash message' do
-    xhr :post, :create, post: { title: 'Foobar', user_id: '1' }
+    xhr :post, :create, params: { post: { title: 'Foobar', user_id: '1' } }
 
-    if Rails.version =~ /^4/
+    if Rails.version.split(".").first.to_i >= 4
       assert_equal @response.body.strip.blank?, true
     else
       assert_redirected_to 'http://test.host/posts'
@@ -22,12 +22,12 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'On an unsuccessful turboboost request, catch and return the error message(s) as an array' do
-    xhr :post, :create, post: { title: 'Title', user_id: nil }
+    xhr :post, :create, params: { post: { title: 'Title', user_id: nil } }
 
     assert_equal @response.status, 422
     assert_equal @response.body.strip, ['User can\'t be blank'].to_json
 
-    xhr :post, :create, post: { title: 'Tit', user_id: nil }
+    xhr :post, :create, params: { post: { title: 'Tit', user_id: nil } }
 
     assert_equal @response.status, 422
     assert_equal @response.body.strip, ['Title is too short.', "User can't be blank"].to_json
@@ -42,9 +42,9 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test 'On a successful turboboost request, return an empty response with headers containing the redirect location and flash message' do
-    xhr :post, :create, user: { name: 'Mike', email: 'mike@mike.com' }
+    xhr :post, :create, params: { user: { name: 'Mike', email: 'mike@mike.com' } }
 
-    if Rails.version =~ /^4/
+    if Rails.version.split(".").first.to_i >= 4
       assert_equal @response.body.strip.blank?, true
     else
       assert_redirected_to 'http://test.host/users/1'
@@ -56,7 +56,7 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test 'On an unsuccessful turboboost request, explicitly render the error message(s)' do
-    xhr :post, :create, user: { name: 'Mike', email: 'mike at mike.com' }
+    xhr :post, :create, params: { user: { name: 'Mike', email: 'mike at mike.com' } }
 
     assert_equal @response.status, 422
     assert_equal @response.body.strip, ['Email is invalid'].to_json
@@ -71,28 +71,30 @@ class ItemsControllerTest < ActionController::TestCase
   end
 
   test 'On a failed turboboost get request, return custom internationalization messaging' do
-    xhr :get, :show, id: 123
+    xhr :get, :show, params: { id: 123 }
     i18n_message = I18n.t('turboboost.errors.ActiveRecord::RecordNotFound')
     assert_equal @response.body.strip, [i18n_message].to_json
   end
 
   test 'On a successful turboboost post request, return rendering options in the headers' do
-    xhr :post, :create, item: { name: 'Bottle' }
+    xhr :post, :create, params: { item: { name: 'Bottle' } }
 
-    assert_equal @response.headers['Location'], nil
+    assert_nil @response.headers['Location']
     assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'Item was successfully created.'
     assert_equal @response.headers['X-Turboboost-Render'], { within: '#sidebar' }.to_json
     assert_equal @response.body.strip, "<div id=\"item\">Bottle</div>"
   end
 
-  test 'On a successful turboboost update using render nothing: true, still return flash headers' do
-    @item = Item.create(name: 'Opener')
-    xhr :put, :update, id: @item.id, item: { name: 'Bottle Opener' }
+  if Rails.version.split(".").first.to_i <= 4
+    test 'On a successful turboboost update using render nothing: true, still return flash headers' do
+      @item = Item.create(name: 'Opener')
+      xhr :put, :update, params: {id: @item.id, item: { name: 'Bottle Opener' }}
 
-    assert_equal @response.headers['Location'], nil
-    assert_equal @response.body.strip, ''
-    assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'ééééé.'
-    # Ensure header has non-ascii Unicode
-    assert_equal "{\"notice\":\"\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9.\"}", @response.headers['X-Flash']
+      assert_equal @response.headers['Location'], nil
+      assert_equal @response.body.strip, ''
+      assert_equal JSON.parse(@response.headers['X-Flash'])['notice'], 'ééééé.'
+      # Ensure header has non-ascii Unicode
+      assert_equal "{\"notice\":\"\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9.\"}", @response.headers['X-Flash']
+    end
   end
 end

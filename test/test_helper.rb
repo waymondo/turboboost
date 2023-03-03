@@ -56,3 +56,12 @@ class ActionView::TestCase
     @controller = ApplicationController
   end
 end
+
+class ActionController::TestCase
+  if Rails.version.split(".").first.to_i >= 5
+    def xhr(method, action, options = {})
+      send(method, action, **{xhr: true}.merge(options))
+    end
+  end
+end
+
