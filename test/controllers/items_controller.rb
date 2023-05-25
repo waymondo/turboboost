@@ -13,7 +13,7 @@ class ItemsController < ApplicationController
 
   def update
     item = Item.find(params[:id])
-    item.update_attributes!(item_params)
+    item.update!(item_params)
     render nothing: true, notice: 'ééééé.'
   end
 

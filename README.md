@@ -80,17 +80,20 @@ If a Turboboost form makes a GET request, it will serialize the form's data and 
 
 To prevent double-clicks on submit buttons from firing the form's action twice, Turboboost comes with automatic form disabling/enabling by default. When you restore a page from Turbolinks' cache, it will re-enable any submit buttons that it had disabled. You can disable this behavior and control your form's submittable state manually with:
 
-``` coffee
-Turboboost.handleFormDisabling = false
+``` javascript
+Turboboost.handleFormDisabling = false;
 ```
 
 ### Error handling ###
 
 If the post in our example above is invalid, no redirect will happen and a `rescue_from` handler will pass the errors to JavaScript through the `turboboost:error` event:
 
-``` coffee
-$(document).on "turboboost:error", (e, errors) ->
-  console.log(errors) # <- JSON array of errors messages
+``` javascript
+(function() {
+  $(document).on("turboboost:error", function(e, errors) {
+    return console.log(errors);
+  });
+}).call(this);
 ```
 
 You can also trigger the JSON error messages explicitly with the method `render_turboboost_errors_for(record)` if you don't want to use the default `rescue_from` handler:
@@ -130,14 +133,14 @@ Optionally, Turboboost can render returned errors with the same HTML structure u
 
 To turn it on:
 
-``` coffeescript
-Turboboost.insertErrors = true # same as 'prepend'
-# other possible values:
-# Turboboost.insertErrors = 'append'
-# Turboboost.insertErrors = 'beforeSubmit'
-# Turboboost.insertErrors = 'afterSubmit'
-# can also be a jQuery selector:
-# Turboboost.insertErrors = '.error-wrap'
+``` javascript
+Turboboost.insertErrors = true; // same as 'prepend'
+// other possible values:
+// Turboboost.insertErrors = 'append';
+// Turboboost.insertErrors = 'beforeSubmit';
+// Turboboost.insertErrors = 'afterSubmit';
+// can also be a jQuery selector:
+// Turboboost.insertErrors = '.error-wrap';
 ```
 
 #### Error internationalization ####
@@ -155,9 +158,12 @@ en:
 
 There is also a `turboboost:success` event that is triggered and passed all current flash messages if they are present:
 
-``` coffeescript
-$(document).on "turboboost:success", (e, flash) ->
-  console.log(flash) # -> {'notice': 'Post was successfully created.'}
+``` javascript
+(function() {
+  $(document).on("turboboost:success", function(e, flash) {
+    return console.log(flash);
+  });
+}).call(this);
 ```
 
 ### Scoped response rendering ###
